@@ -40,5 +40,3 @@ SRCS		 = param.c
 
 MODULE_STACKSIZE = 4096
 
-MAXOPTIMIZATION	 = -Os
-

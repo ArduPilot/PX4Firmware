@@ -40,4 +40,3 @@ SRCS		 = bl_update.c
 
 MODULE_STACKSIZE = 4096
 
-MAXOPTIMIZATION	 = -Os

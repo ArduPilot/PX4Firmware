@@ -4,7 +4,6 @@
 
 MODULE_COMMAND		 = tests
 MODULE_STACKSIZE	 = 12000
-MAXOPTIMIZATION		 = -Os
 
 SRCS			 = test_adc.c \
 			   test_bson.c \

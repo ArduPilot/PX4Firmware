@@ -38,4 +38,3 @@
 MODULE_COMMAND	 = reboot
 SRCS		 = reboot.c
 
-MAXOPTIMIZATION	 = -Os

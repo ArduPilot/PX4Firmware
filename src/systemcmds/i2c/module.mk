@@ -38,4 +38,3 @@
 MODULE_COMMAND	 = i2c
 SRCS		 = i2c.c
 
-MAXOPTIMIZATION	 = -Os

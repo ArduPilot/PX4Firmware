@@ -50,7 +50,12 @@ OBJDUMP			 = $(CROSSDEV)objdump
 
 # XXX this is pulled pretty directly from the fmu Make.defs - needs cleanup
 
-MAXOPTIMIZATION		 = -O3
+OPTIMIZE_MAX		 = -O3
+OPTIMIZE_SIZE		 = -Os
+
+# Default to optimize by size, because we are pretty constrained in flash size and the CPU is fast
+# If needed, define OPTIMIZE otherwise on a per build basis
+OPTIMIZE = $(OPTIMIZE_SIZE)
 
 # Base CPU flags for each of the supported architectures.
 #
@@ -79,7 +84,7 @@ endif
 
 # optimisation flags
 #
-ARCHOPTIMIZATION	 = $(MAXOPTIMIZATION) \
+ARCHOPTIMIZATION	 = $(OPTIMIZE) \
 			   -g \
 			   -fno-strict-aliasing \
 			   -fno-strength-reduce \

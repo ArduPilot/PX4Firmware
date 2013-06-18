@@ -38,4 +38,3 @@
 MODULE_COMMAND	 = perf
 SRCS		 = perf.c
 
-MAXOPTIMIZATION	 = -Os
