@@ -261,7 +261,7 @@ private:
 	 *
 	 * Resets the chip and measurements ranges, but not scale and offset.
 	 */
-	void			reset();
+	int			reset();
 
 	/**
 	 * Static trampoline from the hrt_call context; because we don't have a
@@ -320,6 +320,14 @@ private:
 	 * @param value		The new value to write.
 	 */
 	void			write_reg(unsigned reg, uint8_t value);
+
+	/**
+	 * Write a register in the LSM303D, and confirm that the write worked
+	 *
+	 * @param reg		The register to write.
+	 * @param value		The new value to write.
+	 */
+	int			write_reg_withreadback(unsigned reg, uint8_t value);
 
 	/**
 	 * Modify a register in the LSM303D
@@ -493,6 +501,12 @@ LSM303D::init()
 	if (_accel_reports == nullptr)
 		goto out;
 
+	ret = reset();
+	if(ret != OK) {
+		warnx("lsm303d reset failed");
+		goto out;
+	}
+
 	/* advertise accel topic */
 	struct accel_report zero_report;
 	memset(&zero_report, 0, sizeof(zero_report));
@@ -502,8 +516,6 @@ LSM303D::init()
 
 	if (_mag_reports == nullptr)
 		goto out;
-
-	reset();
 
 	/* advertise mag topic */
 	struct mag_report zero_mag_report;
@@ -522,16 +534,23 @@ out:
 	return ret;
 }
 
-void
+int
 LSM303D::reset()
 {
+	int ret = ERROR;
+
 	irqstate_t flags = irqsave();
+
 	/* enable accel*/
-	write_reg(ADDR_CTRL_REG1, REG1_X_ENABLE_A | REG1_Y_ENABLE_A | REG1_Z_ENABLE_A | REG1_BDU_UPDATE);
+	if((ret = write_reg_withreadback(ADDR_CTRL_REG1, REG1_X_ENABLE_A | REG1_Y_ENABLE_A | REG1_Z_ENABLE_A | REG1_BDU_UPDATE)) != OK)
+		goto out;
 
 	/* enable mag */
-	write_reg(ADDR_CTRL_REG7, REG7_CONT_MODE_M);
-	write_reg(ADDR_CTRL_REG5, REG5_RES_HIGH_M);
+	if((ret = write_reg_withreadback(ADDR_CTRL_REG7, REG7_CONT_MODE_M)) != OK)
+		goto out;
+
+	if((ret = write_reg_withreadback(ADDR_CTRL_REG5, REG5_RES_HIGH_M)) != OK)
+		goto out;
 
 	accel_set_range(LSM303D_ACCEL_DEFAULT_RANGE_G);
 	accel_set_samplerate(LSM303D_ACCEL_DEFAULT_RATE);
@@ -540,10 +559,13 @@ LSM303D::reset()
 
 	mag_set_range(LSM303D_MAG_DEFAULT_RANGE_GA);
 	mag_set_samplerate(LSM303D_MAG_DEFAULT_RATE);
+out:
 	irqrestore(flags);
 
 	_accel_read = 0;
 	_mag_read = 0;
+
+	return ret;
 }
 
 int
@@ -959,6 +981,20 @@ LSM303D::write_reg(unsigned reg, uint8_t value)
 	cmd[1] = value;
 
 	transfer(cmd, nullptr, sizeof(cmd));
+}
+
+int
+LSM303D::write_reg_withreadback(unsigned reg, uint8_t value)
+{
+	write_reg(reg, value);
+	uint8_t r = read_reg(reg);
+
+	if(r != value) {
+		warnx("LSM303D readback failed");
+		return ERROR;
+	}
+	else
+		return OK;
 }
 
 void
