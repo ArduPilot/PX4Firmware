@@ -637,11 +637,6 @@ JUhfBqfsiIQjUMxsnR2hDmg4CJrWpUo9fHOkAPBZ2NXTLTvnrAgMBAAE="); //"
     	serialid[4] = id.data[7]; 	serialid[5] = id.data[6];	serialid[6] = id.data[5];	serialid[7] = id.data[4];
     	serialid[8] = id.data[11]; 	serialid[9] = id.data[10];	serialid[10] = id.data[9];	serialid[11] = id.data[8];
     	
-    	// only allows to dump the *real* serial to the SD card ( in binary format, for compatability with -f ) 
-    	if ( dumpserialtosd ) { 
-            //write_whole_file_to_sd("/fs/microsd/COA.ser",serial,SERIAL_LEN ); 
-            write_whole_file_to_sd("/fs/microsd/COA.sid",serialid,BIN_SERIAL_LEN ); 
-    	} 
     	
    	    useSDserial = false;  usehardcodedserial = false;  useinteractiveserial = false; 
 	} 	
@@ -691,7 +686,16 @@ JUhfBqfsiIQjUMxsnR2hDmg4CJrWpUo9fHOkAPBZ2NXTLTvnrAgMBAAE="); //"
  	   	
 	unsigned char serial[SERIAL_LEN]; // human-readable version is 27 bytes  ( 3x8 + two whitespace +null) 
 	
-	human_readable_serial( &serialid, &serial ) ;  // from serialid, to serial
+	human_readable_serial( &serialid, &serial ) ;  // from serialid, to serial  
+	
+	
+	// we only allow to dump the *real* serial to the SD card, but dump both formats: 
+    if ( usetrueserial  && dumpserialtosd ) { 
+            // in human-readable format, for humans, just like -y does, but without a cert
+            write_whole_file_to_sd("/fs/microsd/COA.ser",serial,SERIAL_LEN ); 
+            // in binary format, for compatability with -f 
+            write_whole_file_to_sd("/fs/microsd/COA.sid",serialid,BIN_SERIAL_LEN ); 
+    }
 	
 	if ( usehardcodedserial ) { 
         warnx("WARNING !!!! FORCING hardcoded serial: '%s' - TESTING ONLY\n", serial); 
