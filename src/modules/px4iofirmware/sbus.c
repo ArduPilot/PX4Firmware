@@ -54,6 +54,27 @@
 
 #define SBUS_FRAME_SIZE		25
 #define SBUS_INPUT_CHANNELS	16
+#define SBUS_FLAGS_BYTE		23
+#define SBUS_FAILSAFE_BIT	3
+#define SBUS_FRAMELOST_BIT	2
+
+/*
+  Measured values with Futaba FX-30/R6108SB:
+    -+100% on TX:  PCM 1.100/1.520/1.950ms -> SBus raw values: 350/1024/1700  (100% ATV)
+    -+140% on TX:  PCM 0.930/1.520/2.112ms -> SBus raw values:  78/1024/1964  (140% ATV)  
+    -+152% on TX:  PCM 0.884/1.520/2.160ms -> SBus raw values:   1/1024/2047  (140% ATV plus dirty tricks)
+*/
+
+/* define range mapping here, -+100% -> 1000..2000 */
+#define SBUS_RANGE_MIN 350.0f
+#define SBUS_RANGE_MAX 1700.0f
+
+#define SBUS_TARGET_MIN 1000.0f
+#define SBUS_TARGET_MAX 2000.0f
+
+/* pre-calculate the floating point stuff as far as possible at compile time */
+#define SBUS_SCALE_FACTOR ((SBUS_TARGET_MAX - SBUS_TARGET_MIN) / (SBUS_RANGE_MAX - SBUS_RANGE_MIN))
+#define SBUS_SCALE_OFFSET (int)(SBUS_TARGET_MIN - (SBUS_SCALE_FACTOR * SBUS_RANGE_MIN + 0.5f))
 
 static int sbus_fd = -1;
 
@@ -202,15 +223,6 @@ sbus_decode(hrt_abstime frame_time, uint16_t *values, uint16_t *num_values, uint
 		return false;
 	}
 
-	/* if the failsafe or connection lost bit is set, we consider the frame invalid */
-	if ((frame[23] & (1 << 2)) && /* signal lost */
-	    (frame[23] & (1 << 3))) { /* failsafe */
-
-		/* actively announce signal loss */
-		*values = 0;
-		return false;
-	}
-
 	/* we have received something we think is a frame */
 	last_frame_time = frame_time;
 
@@ -234,8 +246,9 @@ sbus_decode(hrt_abstime frame_time, uint16_t *values, uint16_t *num_values, uint
 			}
 		}
 
-		/* convert 0-2048 values to 1000-2000 ppm encoding in a very sloppy fashion */
-		values[channel] = (value / 2) + 998;
+
+		/* convert 0-2048 values to 1000-2000 ppm encoding in a not too sloppy fashion */
+		values[channel] = (uint16_t)(value * SBUS_SCALE_FACTOR +.5f) + SBUS_SCALE_OFFSET;
 	}
 
 	/* decode switch channels if data fields are wide enough */
@@ -243,13 +256,28 @@ sbus_decode(hrt_abstime frame_time, uint16_t *values, uint16_t *num_values, uint
 		chancount = 18;
 
 		/* channel 17 (index 16) */
-		values[16] = (frame[23] & (1 << 0)) * 1000 + 998;
+		values[16] = (frame[SBUS_FLAGS_BYTE] & (1 << 0)) * 1000 + 998;
 		/* channel 18 (index 17) */
-		values[17] = (frame[23] & (1 << 1)) * 1000 + 998;
+		values[17] = (frame[SBUS_FLAGS_BYTE] & (1 << 1)) * 1000 + 998;
 	}
 
 	/* note the number of channels decoded */
 	*num_values = chancount;
+
+	/* decode and handle failsafe and frame-lost flags */
+	if (frame[SBUS_FLAGS_BYTE] & (1 << SBUS_FAILSAFE_BIT)) { /* failsafe */
+		/* emulate throttle failsafe for maximum compatibility and do not destroy any channel data */
+		values[2] = 900;
+	}
+	else if (frame[SBUS_FLAGS_BYTE] & (1 << SBUS_FRAMELOST_BIT)) { /* a frame was lost */
+		/* set a special warning flag or try to calculate some kind of RSSI information - to be implemented 
+		 * 
+		 * Attention! This flag indicates a skipped frame only, not a total link loss! Handling this 
+		 * condition as fail-safe greatly reduces the reliability and range of the radio link, 
+		 * e.g. by prematurely issueing return-to-launch!!! */
+
+		// values[2] = 888; // marker for debug purposes
+	}
 
 	return true;
 }
