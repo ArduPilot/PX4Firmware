@@ -1691,6 +1691,16 @@ PX4IO::print_status()
 	for (unsigned i = 0; i < raw_inputs; i++)
 		printf(" %u", io_reg_get(PX4IO_PAGE_RAW_RC_INPUT, PX4IO_P_RAW_RC_BASE + i));
 	printf("\n");
+
+	if (raw_inputs > 0) {
+		int frame_len = io_reg_get(PX4IO_PAGE_STATUS, PX4IO_P_STATUS_RC_DATA);
+		printf("RC data (PPM frame len) %u us\n", frame_len);
+
+		if ((frame_len - raw_inputs * 2000 - 3000) < 0) {
+			printf("WARNING  WARNING  WARNING! This RC receiver does not allow safe frame detection.\n");
+		}
+	}
+
 	uint16_t mapped_inputs = io_reg_get(PX4IO_PAGE_RC_INPUT, PX4IO_P_RC_VALID);
 	printf("mapped R/C inputs 0x%04x", mapped_inputs);
 	for (unsigned i = 0; i < _max_rc_input; i++) {
