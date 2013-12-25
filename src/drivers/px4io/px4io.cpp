@@ -1691,6 +1691,16 @@ PX4IO::print_status()
 	for (unsigned i = 0; i < raw_inputs; i++)
 		printf(" %u", io_reg_get(PX4IO_PAGE_RAW_RC_INPUT, PX4IO_P_RAW_RC_BASE + i));
 	printf("\n");
+
+	if (raw_inputs > 0) {
+		int frame_len = io_reg_get(PX4IO_PAGE_STATUS, PX4IO_P_STATUS_RC_DATA);
+		printf("RC data (PPM frame len) %u us\n", frame_len);
+
+		if ((frame_len - raw_inputs * 2000 - 3000) < 0) {
+			printf("WARNING  WARNING  WARNING! This RC receiver does not allow safe frame detection.\n");
+		}
+	}
+
 	uint16_t mapped_inputs = io_reg_get(PX4IO_PAGE_RC_INPUT, PX4IO_P_RC_VALID);
 	printf("mapped R/C inputs 0x%04x", mapped_inputs);
 	for (unsigned i = 0; i < _max_rc_input; i++) {
@@ -2396,6 +2406,39 @@ px4io_main(int argc, char *argv[])
 		if_test((argc > 2) ? strtol(argv[2], NULL, 0) : 0);
 	}
 
+	if (!strcmp(argv[1], "forceupdate")) {
+		/*
+		  force update of the IO firmware without requiring
+		  the user to hold the safety switch down
+		 */
+		if (argc <= 3) {
+			warnx("usage: px4io forceupdate MAGIC filename");
+			exit(1);
+		}
+		if (g_dev == nullptr) {
+			warnx("px4io is not started, still attempting upgrade");
+		} else {
+			uint16_t arg = atol(argv[2]);
+			int ret = g_dev->ioctl(nullptr, PX4IO_REBOOT_BOOTLOADER, arg);
+			if (ret != OK) {
+				printf("reboot failed - %d\n", ret);
+				exit(1);
+			}
+
+			// tear down the px4io instance
+			delete g_dev;
+		}
+
+		// upload the specified firmware
+		const char *fn[2];
+		fn[0] = argv[3];
+		fn[1] = nullptr;
+		PX4IO_Uploader *up = new PX4IO_Uploader;
+		up->upload(&fn[0]);
+		delete up;
+		exit(0);
+	}
+
 	/* commands below here require a started driver */
 
 	if (g_dev == nullptr)
@@ -2603,39 +2646,6 @@ px4io_main(int argc, char *argv[])
 			exit(1);
 		}
 		printf("SET_DEBUG %u OK\n", (unsigned)level);
-		exit(0);
-	}
-
-	if (!strcmp(argv[1], "forceupdate")) {
-		/*
-		  force update of the IO firmware without requiring
-		  the user to hold the safety switch down
-		 */
-		if (argc <= 3) {
-			printf("usage: px4io forceupdate MAGIC filename\n");
-			exit(1);
-		}
-		if (g_dev == nullptr) {
-			printf("px4io is not started\n");
-			exit(1);
-		}
-		uint16_t arg = atol(argv[2]);
-		int ret = g_dev->ioctl(nullptr, PX4IO_REBOOT_BOOTLOADER, arg);
-		if (ret != OK) {
-			printf("reboot failed - %d\n", ret);
-			exit(1);			
-		}
-
-		// tear down the px4io instance
-		delete g_dev;
-
-		// upload the specified firmware
-		const char *fn[2];
-		fn[0] = argv[3];
-		fn[1] = nullptr;
-		PX4IO_Uploader *up = new PX4IO_Uploader;
-		up->upload(&fn[0]);
-		delete up;
 		exit(0);
 	}
 
