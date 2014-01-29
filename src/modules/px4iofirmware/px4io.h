@@ -150,7 +150,7 @@ extern pwm_limit_t pwm_limit;
 
 # define PX4IO_ADC_CHANNEL_COUNT	2
 # define ADC_VBATT			4
-# define ADC_IBAT			5
+# define ADC_IN5			5
 
 #endif
 
