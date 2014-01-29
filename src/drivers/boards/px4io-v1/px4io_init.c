@@ -102,5 +102,5 @@ __EXPORT void stm32_boardinitialize(void)
 	stm32_configgpio(GPIO_BTN_SAFETY);
 
 	stm32_configgpio(GPIO_ADC_VBATT);
-	stm32_configgpio(GPIO_ADC_IN5);
+	stm32_configgpio(GPIO_ADC_IBATT);
 }
