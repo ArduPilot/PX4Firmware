@@ -37,10 +37,7 @@ MODULES		+= drivers/airspeed
 MODULES		+= drivers/ets_airspeed
 MODULES		+= drivers/meas_airspeed
 MODULES		+= modules/sensors
-
-# Needs to be burned to the ground and re-written; for now,
-# just don't build it.
-#MODULES		+= drivers/mkblctrl
+MODULES		+= drivers/mkblctrl
 
 #
 # System commands
