@@ -1940,6 +1940,11 @@ PX4IO::ioctl(file * /*filep*/, int cmd, unsigned long arg)
 		*(unsigned *)arg = _max_actuators;
 		break;
 
+	case PWM_SERVO_SET_FORCE_SAFETY_OFF:
+		/* force safety swith off */
+		ret = io_reg_set(PX4IO_PAGE_SETUP, PX4IO_P_SETUP_FORCE_SAFETY_OFF, PX4IO_FORCE_SAFETY_MAGIC);
+		break;
+
 	case DSM_BIND_START:
 		io_reg_set(PX4IO_PAGE_SETUP, PX4IO_P_SETUP_DSM, dsm_bind_power_down);
 		usleep(500000);

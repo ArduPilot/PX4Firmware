@@ -104,6 +104,7 @@ const struct {
 	{"param",		test_param,	0},
 	{"bson",		test_bson,	0},
 	{"file",		test_file,	0},
+	{"file2",		test_file2,	OPT_NOJIGTEST | OPT_NOALLTEST},
 	{"mixer",		test_mixer,	OPT_NOJIGTEST | OPT_NOALLTEST},
 	{"mtd",			test_mtd,	0},
 	{"help",		test_help,	OPT_NOALLTEST | OPT_NOHELP | OPT_NOJIGTEST},

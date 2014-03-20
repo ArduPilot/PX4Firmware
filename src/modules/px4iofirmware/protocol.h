@@ -193,6 +193,10 @@ enum {							/* DSM bind states */
 
 #define PX4IO_P_SETUP_CRC		       11	/* get CRC of IO firmware */
 
+#define PX4IO_P_SETUP_FORCE_SAFETY_OFF	       12	/* force safety switch into
+                                                           'armed' (PWM enabled) state */
+#define PX4IO_FORCE_SAFETY_MAGIC            22027       /* required argument for force safety (random) */
+
 /* autopilot control values, -10000..10000 */
 #define PX4IO_PAGE_CONTROLS		51		/* 0..CONFIG_CONTROL_COUNT */
 
