@@ -103,12 +103,14 @@ Airspeed::~Airspeed()
 	/* make sure we are truly inactive */
 	stop();
 
-	if (_class_instance != -1)
+	if (_class_instance != -1) {
 		unregister_class_devname(AIRSPEED_DEVICE_PATH, _class_instance);
+	}
 
 	/* free any existing reports */
-	if (_reports != nullptr)
+	if (_reports != nullptr) {
 		delete _reports;
+	}
 
 	// free perf counters
 	perf_free(_sample_perf);
@@ -125,10 +127,12 @@ Airspeed::init()
 	if (I2C::init() != OK)
 		goto out;
 
+	_diff_pres_scale = get_default_scale();
 	/* allocate basic report buffers */
 	_reports = new RingBuffer(2, sizeof(differential_pressure_s));
-	if (_reports == nullptr)
+	if (_reports == nullptr) {
 		goto out;
+	}
 
 	/* register alternate interfaces if we have to */
 	_class_instance = register_class_devname(AIRSPEED_DEVICE_PATH);
@@ -230,8 +234,9 @@ Airspeed::ioctl(struct file *filp, int cmd, unsigned long arg)
 		}
 
 	case SENSORIOCGPOLLRATE:
-		if (_measure_ticks == 0)
+		if (_measure_ticks == 0) {
 			return SENSOR_POLLRATE_MANUAL;
+		}
 
 		return (1000 / _measure_ticks);
 
@@ -258,16 +263,21 @@ Airspeed::ioctl(struct file *filp, int cmd, unsigned long arg)
 		return -EINVAL;
 
 	case AIRSPEEDIOCSSCALE: {
-		struct airspeed_scale *s = (struct airspeed_scale*)arg;
-		_diff_pres_offset = s->offset_pa;
-		return OK;
+			struct airspeed_scale *s = (struct airspeed_scale*)arg;
+			_diff_pres_offset = s->offset_pa;
+			_diff_pres_scale  = s->scale;
+			// Flush reports, as the buffered ones were done at the wrong scale.
+			if (_reports != nullptr) {
+				_reports->flush();
+			}
+			return OK;
 		}
 
 	case AIRSPEEDIOCGSCALE: {
-		struct airspeed_scale *s = (struct airspeed_scale*)arg;
-		s->offset_pa = _diff_pres_offset;
-		s->scale = 1.0f;
-		return OK;
+			struct airspeed_scale *s = (struct airspeed_scale*)arg;
+			s->offset_pa = _diff_pres_offset;
+			s->scale = _diff_pres_scale;
+			return OK;
 		}
 
 	default:

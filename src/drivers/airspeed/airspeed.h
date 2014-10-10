@@ -117,13 +117,15 @@ protected:
 	virtual void	cycle() = 0;
 	virtual int	measure() = 0;
 	virtual int	collect() = 0;
+    virtual float get_default_scale() = 0;
 
 	work_s			_work;
 	float			_max_differential_pressure_pa;
 	bool			_sensor_ok;
-	int			_measure_ticks;
+	int			    _measure_ticks;
 	bool			_collect_phase;
 	float			_diff_pres_offset;
+    float           _diff_pres_scale; 
 
 	orb_advert_t		_airspeed_pub;
 
