@@ -160,7 +160,7 @@
 #define MPU6000_ACCEL_DEFAULT_RATE			1000
 #define MPU6000_ACCEL_DEFAULT_DRIVER_FILTER_FREQ	30
 
-#define MPU6000_GYRO_DEFAULT_RANGE_G			8
+#define MPU6000_GYRO_DEFAULT_RANGE_DPS			2000
 #define MPU6000_GYRO_DEFAULT_RATE			1000
 #define MPU6000_GYRO_DEFAULT_DRIVER_FILTER_FREQ		30
 
@@ -589,7 +589,7 @@ void MPU6000::reset()
 
 	// Disable I2C bus (recommended on datasheet)
 	write_reg(MPUREG_USER_CTRL, BIT_I2C_IF_DIS);
-        irqrestore(state);
+	irqrestore(state);
 
 	usleep(1000);
 
@@ -608,11 +608,11 @@ void MPU6000::reset()
 
 	// correct gyro scale factors
 	// scale to rad/s in SI units
-	// 2000 deg/s = (2000/180)*PI = 34.906585 rad/s
+	// 2000 deg/s = (2000/180)*PI rad/s
 	// scaling factor:
-	// 1/(2^15)*(2000/180)*PI
-	_gyro_range_scale = (0.0174532 / 16.4);//1.0f / (32768.0f * (2000.0f / 180.0f) * M_PI_F);
+	// (2000/180)*PI /(2^15)
 	_gyro_range_rad_s = (2000.0f / 180.0f) * M_PI_F;
+	_gyro_range_scale = _gyro_range_rad_s / 32768;
 
 	// product-specific scaling
 	switch (_product) {
@@ -641,10 +641,9 @@ void MPU6000::reset()
 		break;
 	}
 
-	// Correct accel scale factors of 4096 LSB/g
-	// scale to m/s^2 ( 1g = 9.81 m/s^2)
-	_accel_range_scale = (MPU6000_ONE_G / 4096.0f);
+	// Correct accel scale factors
 	_accel_range_m_s2 = 8.0f * MPU6000_ONE_G;
+	_accel_range_scale = _accel_range_m_s2 / 32768;
 
 	usleep(1000);
 
