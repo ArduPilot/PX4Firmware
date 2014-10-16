@@ -48,6 +48,11 @@
 #include <drivers/drv_mag.h>
 ORB_DEFINE(sensor_mag, struct mag_report);
 
+//******
+#include <drivers/drv_ioexpander.h> 
+ORB_DEFINE(sensor_ioexpander, struct ioexpander_report);
+//******
+
 #include <drivers/drv_accel.h>
 ORB_DEFINE(sensor_accel, struct accel_report);
 
