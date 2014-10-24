@@ -476,11 +476,11 @@ MPU6000::init()
 	}
 
 	/* allocate basic report buffers */
-	_accel_reports = new RingBuffer(2, sizeof(accel_report));
+	_accel_reports = new RingBuffer(5, sizeof(accel_report));
 	if (_accel_reports == nullptr)
 		goto out;
 
-	_gyro_reports = new RingBuffer(2, sizeof(gyro_report));
+	_gyro_reports = new RingBuffer(5, sizeof(gyro_report));
 	if (_gyro_reports == nullptr)
 		goto out;
 
