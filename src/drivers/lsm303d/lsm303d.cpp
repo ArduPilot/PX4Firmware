@@ -604,13 +604,13 @@ LSM303D::init()
 	}
 
 	/* allocate basic report buffers */
-	_accel_reports = new RingBuffer(2, sizeof(accel_report));
+	_accel_reports = new RingBuffer(5, sizeof(accel_report));
 
 	if (_accel_reports == nullptr)
 		goto out;
 
 	/* advertise accel topic */
-	_mag_reports = new RingBuffer(2, sizeof(mag_report));
+	_mag_reports = new RingBuffer(20, sizeof(mag_report));
 
 	if (_mag_reports == nullptr)
 		goto out;

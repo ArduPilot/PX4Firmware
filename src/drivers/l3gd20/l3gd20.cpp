@@ -400,7 +400,7 @@ L3GD20::init()
 		goto out;
 
 	/* allocate basic report buffers */
-	_reports = new RingBuffer(2, sizeof(gyro_report));
+	_reports = new RingBuffer(5, sizeof(gyro_report));
 
 	if (_reports == nullptr)
 		goto out;
