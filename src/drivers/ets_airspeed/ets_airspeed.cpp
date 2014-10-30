@@ -88,6 +88,8 @@
  */
 #define MIN_ACCURATE_DIFF_PRES_PA 0
 
+#define DIFF_PRES_SCALE_ETS 1 /* Default pressure scaling */
+
 /* Measurement rate is 100Hz */
 #define CONVERSION_INTERVAL	(1000000 / 100)	/* microseconds */
 
@@ -105,6 +107,11 @@ protected:
 	virtual void	cycle();
 	virtual int	measure();
 	virtual int	collect();
+
+	/**
+	* Get the default scaling for this sensor
+	*/
+	virtual float	get_default_scale();
 
 };
 
@@ -164,6 +171,10 @@ ETSAirspeed::collect()
 		log("zero value from sensor"); 
 		return -1;
         }
+	
+	// the ETS sensor outputs Pa directly, so scaling is never applied
+	// to its output. 
+	float diff_pres_pa = (float) diff_pres_pa_raw;
 
 	// The raw value still should be compensated for the known offset
 	diff_pres_pa_raw -= _diff_pres_offset;
@@ -254,6 +265,16 @@ ETSAirspeed::cycle()
 		   (worker_t)&Airspeed::cycle_trampoline,
 		   this,
 		   USEC2TICK(CONVERSION_INTERVAL));
+}
+
+
+/**
+* get default scale of the sensor
+*/
+float
+ETSAirspeed::get_default_scale() 
+{
+	return DIFF_PRES_SCALE_ETS;
 }
 
 /**

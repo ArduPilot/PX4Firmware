@@ -373,6 +373,7 @@ MEASAirspeed::voltage_correction(float &diff_press_pa, float &temperature)
 	if (voltage_diff < -1.0f) {
 		voltage_diff = -1.0f;
 	}
+	temperature -= voltage_diff * temp_slope;	
 	temperature -= voltage_diff * temp_slope;
 #endif // CONFIG_ARCH_BOARD_PX4FMU_V2
 }

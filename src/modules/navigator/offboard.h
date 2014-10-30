@@ -1,6 +1,6 @@
-/****************************************************************************
+/***************************************************************************
  *
- *   Copyright (C) 2012 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2014 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,57 +30,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  ****************************************************************************/
-
 /**
- * @file drv_baro.h
+ * @file offboard.h
  *
- * Barometric pressure sensor driver interface.
+ * Helper class for offboard commands
+ *
+ * @author Julian Oes <julian@oes.ch>
  */
 
-#ifndef _DRV_BARO_H
-#define _DRV_BARO_H
+#ifndef NAVIGATOR_OFFBOARD_H
+#define NAVIGATOR_OFFBOARD_H
 
-#include <stdint.h>
-#include <sys/ioctl.h>
+#include <controllib/blocks.hpp>
+#include <controllib/block/BlockParam.hpp>
 
-#include "drv_sensor.h"
-#include "drv_orb_dev.h"
+#include <uORB/uORB.h>
+#include <uORB/topics/offboard_control_setpoint.h>
 
-#define BARO_DEVICE_PATH	"/dev/baro"
+#include "navigator_mode.h"
 
-/**
- * baro report structure.  Reads from the device must be in multiples of this
- * structure.
- */
-struct baro_report {
-	float pressure;
-	float altitude;
-	float temperature;
-	uint64_t timestamp;
-	uint64_t error_count;
+class Navigator;
 
-	// raw MS5611 values for debugging
-	uint32_t ms5611_D1;
-	uint32_t ms5611_D2;
+class Offboard : public NavigatorMode
+{
+public:
+	Offboard(Navigator *navigator, const char *name);
+
+	~Offboard();
+
+	virtual void on_inactive();
+
+	virtual void on_activation();
+
+	virtual void on_active();
+private:
+	void update_offboard_control_setpoint();
+
+	struct offboard_control_setpoint_s _offboard_control_sp;
 };
 
-/*
- * ObjDev tag for raw barometer data.
- */
-ORB_DECLARE(sensor_baro0);
-ORB_DECLARE(sensor_baro1);
-
-/*
- * ioctl() definitions
- */
-
-#define _BAROIOCBASE		(0x2200)
-#define _BAROIOC(_n)		(_IOC(_BAROIOCBASE, _n))
-
-/** set corrected MSL pressure in pascals */
-#define BAROIOCSMSLPRESSURE	_BAROIOC(0)
-
-/** get current MSL pressure in pascals */
-#define BAROIOCGMSLPRESSURE	_BAROIOC(1)
-
-#endif /* _DRV_BARO_H */
+#endif
