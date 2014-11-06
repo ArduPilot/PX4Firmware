@@ -50,7 +50,7 @@ OBJDUMP			 = $(CROSSDEV)objdump
 
 # Check if the right version of the toolchain is available
 #
-CROSSDEV_VER_SUPPORTED	 = 4.7
+CROSSDEV_VER_SUPPORTED	 = 4.8
 CROSSDEV_VER_FOUND	 = $(shell $(CC) -dumpversion)
 
 ifeq (,$(findstring $(CROSSDEV_VER_SUPPORTED),$(CROSSDEV_VER_FOUND)))
