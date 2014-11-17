@@ -73,6 +73,11 @@ if px4flow start
 then
 fi
 
+# Check for irlock sensor
+if irlock start
+then
+fi
+
 #
 # Start the sensor collection task.
 # IMPORTANT: this also loads param offsets
