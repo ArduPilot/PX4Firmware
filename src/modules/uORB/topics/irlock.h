@@ -1,9 +1,7 @@
 /****************************************************************************
  *
  *   Copyright (C) 2012 PX4 Development Team. All rights reserved.
- *   Author: Lorenz Meier <lm@inf.ethz.ch>
- *           Thomas Gubler <thomasgubler@student.ethz.ch>
- *           Julian Oes <joes@student.ethz.ch>
+ *   Author: @author Lorenz Meier <lm@inf.ethz.ch>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,64 +32,39 @@
  *
  ****************************************************************************/
 
-/**
- * @file subsystem_info.h
- * Definition of the subsystem info topic.
+/*
+ * irlock.h
  *
- * @author Lorenz Meier <lm@inf.ethz.ch>
- * @author Thomas Gubler <thomasgubler@student.ethz.ch>
- * @author Julian Oes <joes@student.ethz.ch>
+ *  Created on: Nov 14, 2014
+ *      Author: MLandes
+ *
+ *  Definition of the irlock uORB topic
  */
 
-#ifndef TOPIC_SUBSYSTEM_INFO_H_
-#define TOPIC_SUBSYSTEM_INFO_H_
+#ifndef IRLOCK_H_
+#define IRLOCK_H_
 
 #include <stdint.h>
-#include <stdbool.h>
 #include "../uORB.h"
-
-enum SUBSYSTEM_TYPE {
-	SUBSYSTEM_TYPE_GYRO = 1,
-	SUBSYSTEM_TYPE_ACC = 2,
-	SUBSYSTEM_TYPE_MAG = 4,
-	SUBSYSTEM_TYPE_ABSPRESSURE = 8,
-	SUBSYSTEM_TYPE_DIFFPRESSURE = 16,
-	SUBSYSTEM_TYPE_GPS = 32,
-	SUBSYSTEM_TYPE_OPTICALFLOW = 64,
-	SUBSYSTEM_TYPE_CVPOSITION = 128,
-	SUBSYSTEM_TYPE_LASERPOSITION = 256,
-	SUBSYSTEM_TYPE_EXTERNALGROUNDTRUTH = 512,
-	SUBSYSTEM_TYPE_ANGULARRATECONTROL = 1024,
-	SUBSYSTEM_TYPE_ATTITUDESTABILIZATION = 2048,
-	SUBSYSTEM_TYPE_YAWPOSITION = 4096,
-	SUBSYSTEM_TYPE_IRLOCK = 8192,
-	SUBSYSTEM_TYPE_ALTITUDECONTROL = 16384,
-	SUBSYSTEM_TYPE_POSITIONCONTROL = 32768,
-	SUBSYSTEM_TYPE_MOTORCONTROL = 65536,
-	SUBSYSTEM_TYPE_RANGEFINDER = 131072
-};
 
 /**
  * @addtogroup topics
  */
+struct irlock_s {
+	uint64_t timestamp; // microseconds since system start
 
-/**
- * State of individual sub systems
- */
-struct subsystem_info_s {
-	bool present;
-	bool enabled;
-	bool ok;
-
-	enum SUBSYSTEM_TYPE subsystem_type;
+	uint16_t signature;
+	uint16_t center_x;
+	uint16_t center_y;
+	uint16_t width;
+	uint16_t height;
+	uint16_t angle;
 };
-
 /**
  * @}
  */
 
-/* register this as object request broker structure */
-ORB_DECLARE(subsystem_info);
+// register this with object request broker
+ORB_DECLARE(irlock);
 
-#endif /* TOPIC_SUBSYSTEM_INFO_H_ */
-
+#endif /* IRLOCK_H_ */

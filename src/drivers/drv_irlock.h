@@ -1,9 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2012 PX4 Development Team. All rights reserved.
- *   Author: Lorenz Meier <lm@inf.ethz.ch>
- *           Thomas Gubler <thomasgubler@student.ethz.ch>
- *           Julian Oes <joes@student.ethz.ch>
+ *   Copyright (C) 2013 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,64 +31,35 @@
  *
  ****************************************************************************/
 
-/**
- * @file subsystem_info.h
- * Definition of the subsystem info topic.
+/*
+ * drv_irlock.h
  *
- * @author Lorenz Meier <lm@inf.ethz.ch>
- * @author Thomas Gubler <thomasgubler@student.ethz.ch>
- * @author Julian Oes <joes@student.ethz.ch>
+ *  Created on: Nov 12, 2014
+ *      Author: MLandes
  */
 
-#ifndef TOPIC_SUBSYSTEM_INFO_H_
-#define TOPIC_SUBSYSTEM_INFO_H_
+#ifndef _DRV_IRLOCK_H
+#define _DRV_IRLOCK_H
 
 #include <stdint.h>
-#include <stdbool.h>
-#include "../uORB.h"
+#include <sys/ioctl.h>
 
-enum SUBSYSTEM_TYPE {
-	SUBSYSTEM_TYPE_GYRO = 1,
-	SUBSYSTEM_TYPE_ACC = 2,
-	SUBSYSTEM_TYPE_MAG = 4,
-	SUBSYSTEM_TYPE_ABSPRESSURE = 8,
-	SUBSYSTEM_TYPE_DIFFPRESSURE = 16,
-	SUBSYSTEM_TYPE_GPS = 32,
-	SUBSYSTEM_TYPE_OPTICALFLOW = 64,
-	SUBSYSTEM_TYPE_CVPOSITION = 128,
-	SUBSYSTEM_TYPE_LASERPOSITION = 256,
-	SUBSYSTEM_TYPE_EXTERNALGROUNDTRUTH = 512,
-	SUBSYSTEM_TYPE_ANGULARRATECONTROL = 1024,
-	SUBSYSTEM_TYPE_ATTITUDESTABILIZATION = 2048,
-	SUBSYSTEM_TYPE_YAWPOSITION = 4096,
-	SUBSYSTEM_TYPE_IRLOCK = 8192,
-	SUBSYSTEM_TYPE_ALTITUDECONTROL = 16384,
-	SUBSYSTEM_TYPE_POSITIONCONTROL = 32768,
-	SUBSYSTEM_TYPE_MOTORCONTROL = 65536,
-	SUBSYSTEM_TYPE_RANGEFINDER = 131072
-};
+#include "drv_sensor.h" // include sensor driver interfaces
+#include "drv_orb_dev.h"
 
-/**
- * @addtogroup topics
+#define IRLOCK_DEVICE_PATH	"/dev/irlock"
+
+/*
+ * ObjDev tag for irlock data.
  */
+ORB_DECLARE(irlock_data);
 
-/**
- * State of individual sub systems
+/*
+ * ioctl() definitions
+ *
+ * custom irlock sensor driver interface (none currently)
  */
-struct subsystem_info_s {
-	bool present;
-	bool enabled;
-	bool ok;
+#define _IRLOCKIOCBASE			(0x7800)
+#define __IRLOCKIOC(_n)		(_IOC(_IRLOCKIOCBASE, _n))
 
-	enum SUBSYSTEM_TYPE subsystem_type;
-};
-
-/**
- * @}
- */
-
-/* register this as object request broker structure */
-ORB_DECLARE(subsystem_info);
-
-#endif /* TOPIC_SUBSYSTEM_INFO_H_ */
-
+#endif /* _DRV_IRLOCK_H */

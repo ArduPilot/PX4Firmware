@@ -42,6 +42,7 @@ MODULES		+= modules/sensors
 MODULES		+= drivers/mkblctrl
 MODULES		+= drivers/pca8574
 MODULES		+= drivers/px4flow
+MODULES     += drivers/irlock
 
 
 # Needs to be burned to the ground and re-written; for now,
