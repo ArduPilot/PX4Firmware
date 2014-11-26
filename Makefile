@@ -173,6 +173,7 @@ $(ARCHIVE_DIR)%.export:	board = $(notdir $(basename $@))
 $(ARCHIVE_DIR)%.export:	configuration = nsh
 $(NUTTX_ARCHIVES): $(ARCHIVE_DIR)%.export: $(NUTTX_SRC)
 	@$(ECHO) %% Configuring NuttX for $(board)
+	$(Q)$(COPY) $(PX4_BASE)nuttx-configs/$(board)/nsh/defconfig $(NUTTX_SRC).config
 	$(Q) (cd $(NUTTX_SRC) && $(RMDIR) nuttx-export)
 	$(Q) $(MAKE) -r -j1 -C $(NUTTX_SRC) -r $(MQUIET) distclean
 	$(Q) (cd $(NUTTX_SRC)/configs && $(COPYDIR) $(PX4_BASE)nuttx-configs/$(board) .)

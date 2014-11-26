@@ -185,6 +185,12 @@ __BEGIN_DECLS
 #define HRT_PPM_CHANNEL		3	/* use capture/compare channel 3 */
 #define GPIO_PPM_IN		(GPIO_ALT|GPIO_AF1|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN10)
 
+
+/* PWM input
+ */
+#define PWMIN_TIMER		2	/* Use timer2 for the PWM input */
+#define PWMIN_TIMER_CHANNEL 	2	/* Use capture channel 2 */
+#define GPIO_PWM_IN 		(GPIO_ALT|GPIO_AF1|GPIO_SPEED_50MHz|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN1)
 /****************************************************************************************************
  * Public Types
  ****************************************************************************************************/
