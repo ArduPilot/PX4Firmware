@@ -1636,6 +1636,9 @@ PX4IO::io_publish_raw_rc()
 
 	} else if (_status & PX4IO_P_STATUS_FLAGS_RC_SBUS) {
 		rc_val.input_source = RC_INPUT_SOURCE_PX4IO_SBUS;
+        
+}    else if (_status & PX4IO_P_STATUS_FLAGS_RC_XBUS) {
+		rc_val.input_source = RC_INPUT_SOURCE_PX4IO_XBUS;
 
 	} else if (_status & PX4IO_P_STATUS_FLAGS_RC_ST24) {
 		rc_val.input_source = RC_INPUT_SOURCE_PX4IO_ST24;
@@ -1963,6 +1966,7 @@ PX4IO::print_status(bool extended_status)
 	       ((flags & PX4IO_P_STATUS_FLAGS_RC_DSM)   ? " DSM" : ""),
 	       ((flags & PX4IO_P_STATUS_FLAGS_RC_ST24)   ? " ST24" : ""),
 	       ((flags & PX4IO_P_STATUS_FLAGS_RC_SBUS)  ? " SBUS" : ""),
+           ((flags & PX4IO_P_STATUS_FLAGS_RC_XBUS)  ? " XBUS" : ""),
 	       ((flags & PX4IO_P_STATUS_FLAGS_FMU_OK)   ? " FMU_OK" : " FMU_FAIL"),
 	       ((flags & PX4IO_P_STATUS_FLAGS_RAW_PWM)  ? " RAW_PWM_PASSTHROUGH" : ""),
 	       ((flags & PX4IO_P_STATUS_FLAGS_MIXER_OK) ? " MIXER_OK" : " MIXER_FAIL"),
@@ -2501,6 +2505,9 @@ PX4IO::ioctl(file * filep, int cmd, unsigned long arg)
 
 			} else if (status & PX4IO_P_STATUS_FLAGS_RC_DSM) {
 				rc_val->input_source = RC_INPUT_SOURCE_PX4IO_SPEKTRUM;
+            
+            } else if (status & PX4IO_P_STATUS_FLAGS_RC_XBUS) {
+				rc_val->input_source = RC_INPUT_SOURCE_PX4IO_XBUS;
 
 			} else if (status & PX4IO_P_STATUS_FLAGS_RC_SBUS) {
 				rc_val->input_source = RC_INPUT_SOURCE_PX4IO_SBUS;

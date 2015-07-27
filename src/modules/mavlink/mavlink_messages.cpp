@@ -1760,6 +1760,9 @@ protected:
 				case RC_INPUT_SOURCE_PX4IO_ST24:
 					msg.rssi |= (3 << 4);
 					break;
+				case RC_INPUT_SOURCE_PX4IO_XBUS:
+					msg.rssi |= (4 << 4);
+					break;
 			}
 
 			if (rc.rc_lost) {

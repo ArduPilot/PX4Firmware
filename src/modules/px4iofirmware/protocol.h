@@ -33,6 +33,8 @@
 
 #pragma once
 
+#include <inttypes.h>
+
 /**
  * @file protocol.h
  *
@@ -113,6 +115,7 @@
 #define PX4IO_P_STATUS_FLAGS_SAFETY_OFF		(1 << 12) /* safety is off */
 #define PX4IO_P_STATUS_FLAGS_FMU_INITIALIZED	(1 << 13) /* FMU was initialized and OK once */
 #define PX4IO_P_STATUS_FLAGS_RC_ST24		(1 << 14) /* ST24 input is valid */
+#define PX4IO_P_STATUS_FLAGS_RC_XBUS		(1 << 15) /* XBus input is valid */
 
 #define PX4IO_P_STATUS_ALARMS			3	 /* alarm flags - alarms latch, write 1 to a bit to clear it */
 #define PX4IO_P_STATUS_ALARMS_VBATT_LOW		(1 << 0) /* [1] VBatt is very close to regulator dropout */

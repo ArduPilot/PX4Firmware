@@ -48,6 +48,8 @@
 
 #include <systemlib/pwm_limit/pwm_limit.h>
 
+#include <drivers/drv_hrt.h>
+
 /*
  * Constants and limits.
  */
@@ -178,6 +180,8 @@ extern pwm_limit_t pwm_limit;
 
 #define CONTROL_PAGE_INDEX(_group, _channel) (_group * PX4IO_CONTROL_CHANNELS + _channel)
 
+#define DSM_INPUT_TYPE 2	/* 0 - DSM, 1 - ST24, 2 - XBus Mode B */
+
 /*
  * Mixer
  */
@@ -216,7 +220,8 @@ extern uint16_t	adc_measure(unsigned channel);
 extern void	controls_init(void);
 extern void	controls_tick(void);
 extern int	dsm_init(const char *device);
-extern bool	dsm_input(uint16_t *values, uint16_t *num_values, uint8_t *n_bytes, uint8_t **bytes);
+extern bool	dsm_input(uint8_t *n_bytes, uint8_t **bytes, hrt_abstime *now);
+extern bool	xbus_decode(uint8_t *bytes, uint16_t num_bytes, uint16_t *values, uint16_t *num_values);
 extern void	dsm_bind(uint16_t cmd, int pulses);
 extern int	sbus_init(const char *device);
 extern bool	sbus_input(uint16_t *values, uint16_t *num_values, bool *sbus_failsafe, bool *sbus_frame_drop, uint16_t max_channels);

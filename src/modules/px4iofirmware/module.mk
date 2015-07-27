@@ -3,6 +3,7 @@
 SRCS		= adc.c \
 		  controls.c \
 		  dsm.c \
+		  xbus.c \
 		  px4io.c \
 		  registers.c \
 		  safety.c \
