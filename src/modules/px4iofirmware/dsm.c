@@ -317,7 +317,7 @@ dsm_bind(uint16_t cmd, int pulses)
  * @param[out] num_values pointer to number of raw channel values returned
  * @return true=DSM frame successfully decoded, false=no update
  */
-static bool
+bool
 dsm_decode(hrt_abstime frame_time, uint16_t *values, uint16_t *num_values)
 {
 	/*
