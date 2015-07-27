@@ -1863,6 +1863,8 @@ protected:
 					break;
 				case RC_INPUT_SOURCE_UNKNOWN:
 					// do nothing
+				case RC_INPUT_SOURCE_PX4IO_XBUS:
+					msg.rssi |= (4 << 4);
 					break;
 			}
 

@@ -88,7 +88,7 @@ uint16_t CRC16(uint16_t crc, uint8_t value)
  * @return true=decoded raw channel values updated, false=no update
  */
 bool
-xbus_input(uint8_t *bytes, uint16_t num_bytes, uint16_t *values, uint16_t *num_values)
+xbus_decode(uint8_t *bytes, uint16_t num_bytes, uint16_t *values, uint16_t *num_values)
 {
     /* If we have no new data, return here */
     if (num_bytes < 1)
@@ -108,8 +108,9 @@ xbus_input(uint8_t *bytes, uint16_t num_bytes, uint16_t *values, uint16_t *num_v
     bytesReceived += num_bytes;
     
     /* If we don't have a full packet, return here */
-    if (bytesReceived < XBUS_PACKET_LENGTH)
+    if (bytesReceived < XBUS_PACKET_LENGTH) {
         return false;
+    }
     
     /* Reset counter ready for next packet */
     bytesReceived = 0;
@@ -120,8 +121,11 @@ xbus_input(uint8_t *bytes, uint16_t num_bytes, uint16_t *values, uint16_t *num_v
         crc_calc = CRC16(crc_calc, xbus_buffer[i]);
     }
     uint16_t crc_buffer = ((uint16_t)(xbus_buffer[XBUS_PACKET_LENGTH - 2]))<<8 | (uint16_t)(xbus_buffer[XBUS_PACKET_LENGTH - 1]);
-    if (crc_calc != crc_buffer)
+    
+    if (crc_calc != crc_buffer) {
+        memset(xbus_buffer, '\0', XBUS_PACKET_LENGTH);
         return false;
+    }
     
     
     /* Apply this channel mapping to get correct order 
@@ -145,8 +149,8 @@ xbus_input(uint8_t *bytes, uint16_t num_bytes, uint16_t *values, uint16_t *num_v
      **/
     for (int channel = 0; channel<XBUS_NUM_CHANNELS; channel++) {
         uint32_t value = (((uint16_t)xbus_buffer[2*channel+1])<<8) | ((uint16_t)xbus_buffer[2*channel+2]);
-        double dblVal = value*(2200.0-800.0)/4095.0 + 800.0;
-        values[chMap[channel]] = (uint16_t)dblVal;
+        values[chMap[channel]] = (value*1400)/4096 + 800;
     }
+
     return true;
 }

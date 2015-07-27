@@ -457,14 +457,13 @@ dsm_decode(hrt_abstime frame_time, uint16_t *values, uint16_t *num_values)
  * @return true=decoded raw channel values updated, false=no update
  */
 bool
-dsm_input(uint16_t *values, uint16_t *num_values, uint8_t *n_bytes, uint8_t **bytes)
+dsm_input(uint8_t *n_bytes, uint8_t **bytes, hrt_abstime *now)
 {
 	ssize_t		ret;
-	hrt_abstime	now;
 
 	/*
 	 */
-	now = hrt_absolute_time();
+	*now = hrt_absolute_time();
 
 	if ((now - dsm_last_rx_time) > 5000) {
 		if (dsm_partial_frame_count > 0) {
@@ -505,5 +504,6 @@ dsm_input(uint16_t *values, uint16_t *num_values, uint8_t *n_bytes, uint8_t **by
 	 * decode it.
 	 */
 	dsm_partial_frame_count = 0;
-	return dsm_decode(now, values, num_values);
+//	return dsm_decode(now, values, num_values);
+    return true;
 }
