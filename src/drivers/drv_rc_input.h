@@ -122,6 +122,9 @@ struct rc_input_values {
 	/** receive signal strength indicator (RSSI): < 0: Undefined, 0: no signal, 100: full reception */
 	int32_t			rssi;
 
+	/** link quality indicator: < 0: Undefined, 0.0: wost quality link, 1.0: maximum quality link */
+	float			link_quality;
+
 	/**
 	 * explicit failsafe flag: true on TX failure or TX out of range , false otherwise.
 	 * Only the true state is reliable, as there are some (PPM) receivers on the market going
