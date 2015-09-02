@@ -284,8 +284,8 @@ controls_tick() {
     
 	/* store Link Quality */
 	unsigned link_quality_bits_set = __builtin_popcount(link_quality_bits);
-        unsigned total_number_of_link_quality_bits = ((sizeof(link_quality_bits) * CHAR_BIT));    
-        float link_quality_float = ((float)link_quality_bits_set) / ((float)total_number_of_link_quality_bits);
+    unsigned total_number_of_link_quality_bits = ((sizeof(link_quality_bits) * CHAR_BIT));    
+    float link_quality_float = ((float)link_quality_bits_set) / ((float)total_number_of_link_quality_bits);
 	r_page_raw_rc_input[PX4IO_P_RAW_RC_LINK_QUALITY] = FLOAT_TO_REG(link_quality_float); 
     
 	/*
