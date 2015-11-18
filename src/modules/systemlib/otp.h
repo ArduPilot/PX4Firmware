@@ -51,7 +51,8 @@ __BEGIN_DECLS
 #define OTP_LOCK_LOCKED			0x00
 #define OTP_LOCK_UNLOCKED		0xFF
 
-
+#define OTP_NUM_BLOCKS          16
+#define OTP_BLOCK_SIZE          32
 
 #include <unistd.h>
 #include <stdint.h>
@@ -91,7 +92,8 @@ typedef struct {
 #define F_KEY2 ((unsigned long)0xCDEF89AB)
 #define IS_F_ADDRESS(ADDRESS) ((((ADDRESS) >= 0x08000000) && ((ADDRESS) < 0x080FFFFF)) || (((ADDRESS) >= 0x1FFF7800) && ((ADDRESS) < 0x1FFF7A0F)))
 
-
+#define F_OTP_BLOCK_PTR(blocknum) ((volatile uint8_t *) (ADDR_OTP_START + OTP_BLOCK_SIZE * (blocknum)))
+#define F_OTP_IS_LOCKED(blocknum) (((volatile uint8_t *) ADDR_OTP_LOCK_START)[blocknum] == 0)
 
 #pragma pack(push, 1)
 
@@ -141,7 +143,7 @@ __EXPORT void F_lock(void);
 __EXPORT int val_read(void *dest, volatile const void *src, int bytes);
 __EXPORT int val_write(volatile void *dest, const void *src, int bytes);
 __EXPORT int write_otp(uint8_t id_type, uint32_t vid, uint32_t pid, char *signature);
-__EXPORT int lock_otp(void);
+__EXPORT int lock_otp(int blocknum);
 
 
 __EXPORT int F_write_byte(unsigned long Address, uint8_t Data);
