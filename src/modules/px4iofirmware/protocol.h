@@ -158,7 +158,8 @@
 #define PX4IO_P_RAW_RC_DATA			3	/* [1] + [2] Details about the RC source (PPM frame length, Spektrum protocol type) */
 #define PX4IO_P_RAW_FRAME_COUNT			4	/* Number of total received frames (wrapping counter) */
 #define PX4IO_P_RAW_LOST_FRAME_COUNT		5	/* Number of total dropped frames (wrapping counter) */
-#define PX4IO_P_RAW_RC_BASE			6	/* CONFIG_RC_INPUT_COUNT channels from here */
+#define PX4IO_P_RAW_RC_LINK_QUALITY		6	/* Link Quality value. 0.0: worst quality link, 1.0: best quality link */
+#define PX4IO_P_RAW_RC_BASE			7	/* CONFIG_RC_INPUT_COUNT channels from here */
 
 /* array of scaled RC input values, -10000..10000 */
 #define PX4IO_PAGE_RC_INPUT		5

@@ -64,6 +64,11 @@ static int _dsm_fd;
 
 static uint16_t rc_value_override = 0;
 
+/* Link Quality indicator. Sliding window tracking lost frames. At about 45 frames per second
+   a 32 bit int is good for about 0.7 seconds, which seems like a reasonable amount of
+   local smoothing. */
+uint32_t link_quality_bits = 0;
+
 bool dsm_port_input(uint16_t *rssi, bool *dsm_updated, bool *st24_updated, bool *sumd_updated)
 {
 	perf_begin(c_gather_dsm);
@@ -180,7 +185,7 @@ controls_tick() {
 	 * other.  Don't do that.
 	 */
 
-	/* receive signal strenght indicator (RSSI). 0 = no connection, 255: perfect connection */
+	/* receive signal strength indicator (RSSI). 0 = no connection, 255: perfect connection */
 	uint16_t rssi = 0;
 
 #ifdef ADC_RSSI
@@ -199,9 +204,10 @@ controls_tick() {
 	}
 #endif
 
-	/* zero RSSI if signal is lost */
+	/* zero RSSI and Link Quality if signal is lost */
 	if (!(r_raw_rc_flags & (PX4IO_P_RAW_RC_FLAGS_RC_OK))) {
 		rssi = 0;
+		link_quality_bits = 0;
 	}
 
 	perf_begin(c_gather_dsm);
@@ -227,12 +233,16 @@ controls_tick() {
 		r_status_flags |= PX4IO_P_STATUS_FLAGS_RC_SBUS;
 
 		unsigned sbus_rssi = RC_INPUT_RSSI_MAX;
+		/* Slide Link Quality bitset one bit forward when we receive a frame */
+		link_quality_bits <<= 1;    
 
 		if (sbus_frame_drop) {
 			r_raw_rc_flags |= PX4IO_P_RAW_RC_FLAGS_FRAME_DROP;
 			sbus_rssi = RC_INPUT_RSSI_MAX / 2;
 		} else {
 			r_raw_rc_flags &= ~(PX4IO_P_RAW_RC_FLAGS_FRAME_DROP);
+			/* Set most current bit in bitset to true, indicating we received a valid frame */
+			link_quality_bits |= 1;
 		}
 
 		if (sbus_failsafe) {
@@ -271,7 +281,13 @@ controls_tick() {
 
 	/* store RSSI */
 	r_page_raw_rc_input[PX4IO_P_RAW_RC_NRSSI] = rssi;
-
+    
+	/* store Link Quality */
+	unsigned link_quality_bits_set = __builtin_popcount(link_quality_bits);
+    unsigned total_number_of_link_quality_bits = ((sizeof(link_quality_bits) * CHAR_BIT));    
+    float link_quality_float = ((float)link_quality_bits_set) / ((float)total_number_of_link_quality_bits);
+	r_page_raw_rc_input[PX4IO_P_RAW_RC_LINK_QUALITY] = FLOAT_TO_REG(link_quality_float); 
+    
 	/*
 	 * In some cases we may have received a frame, but input has still
 	 * been lost.
