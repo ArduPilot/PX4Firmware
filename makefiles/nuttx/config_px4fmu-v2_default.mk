@@ -46,6 +46,7 @@ MODULES		+= drivers/px4flow
 MODULES		+= drivers/oreoled
 MODULES		+= drivers/gimbal
 MODULES		+= drivers/pwm_input
+MODULES		+= drivers/oreoled/oreoled_bootloader
 
 #
 # System commands
