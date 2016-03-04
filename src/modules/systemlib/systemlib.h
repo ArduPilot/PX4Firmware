@@ -52,13 +52,8 @@ enum MULT_PORTS {
 	MULT_0_US2_RXTX = 0,
 	MULT_1_US2_FLOW,
 	MULT_2_GPIO_12,
-	MULT_COUNT
+	MULT_COUNT // MULT_COUNT HAS TO BE LESS THAN OR EQUAL 33
 };
-
-/* Check max multi port count */
-#if (MULT_COUNT > 33)
-#error "MULT_COUNT HAS TO BE LESS THAN OR EQUAL 33"
-#endif
 
 /* FMU board info, to be stored in the first 64 bytes of the FMU EEPROM */
 #pragma pack(push,1)
