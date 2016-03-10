@@ -276,9 +276,17 @@ px4_join(OUT CMAKE_EXE_LINKER_FLAGS LIST "${exe_linker_flags}" GLUE " ")
 px4_join(OUT CMAKE_C_FLAGS LIST "${c_flags}" GLUE " ")
 px4_join(OUT CMAKE_CXX_FLAGS LIST "${cxx_flags}" GLUE " ")
 
+string(APPEND CMAKE_C_FLAGS " " ${EXTRA_C_FLAGS})
+string(APPEND CMAKE_CXX_FLAGS " " ${EXTRA_CXX_FLAGS})
+
 include_directories(${include_dirs})
 link_directories(${link_dirs})
 add_definitions(${definitions})
+
+file(WRITE ${CMAKE_BINARY_DIR}/c_flags "${c_flags}")
+file(WRITE ${CMAKE_BINARY_DIR}/cxx_flags "${cxx_flags}")
+file(WRITE ${CMAKE_BINARY_DIR}/include_dirs "${include_dirs}")
+file(WRITE ${CMAKE_BINARY_DIR}/definitions "${definitions}")
 
 #=============================================================================
 # source code generation

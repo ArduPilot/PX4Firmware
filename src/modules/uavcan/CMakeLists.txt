@@ -30,16 +30,56 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 ############################################################################
-set(depends
-	msg_gen
-	prebuild_targets
-	)
+
+set(UAVCAN_USE_CPP03 ON CACHE BOOL "uavcan cpp03")
+set(UAVCAN_PLATFORM stm32 CACHE STRING "uavcan platform")
+set(UAVCAN_LIBUAVCAN_PATH libuavcan CACHE PATH "path to libuavcan")
+
+string(TOUPPER "${OS}" OS_UPPER)
+add_definitions(
+		-DUAVCAN_CPP_VERSION=UAVCAN_CPP03
+		-DUAVCAN_MEM_POOL_BLOCK_SIZE=48
+		-DUAVCAN_NO_ASSERTIONS
+		-DUAVCAN_PLATFORM=stm32
+		-DUAVCAN_STM32_${OS_UPPER}=1
+		-DUAVCAN_STM32_NUM_IFACES=${config_uavcan_num_ifaces}
+		-DUAVCAN_STM32_TIMER_NUMBER=5
+		)
+
+add_subdirectory(${UAVCAN_LIBUAVCAN_PATH} libuavcan EXCLUDE_FROM_ALL)
+add_dependencies(uavcan platforms__nuttx)
+
+include_directories(${UAVCAN_LIBUAVCAN_PATH}/libuavcan/include)
+include_directories(${UAVCAN_LIBUAVCAN_PATH}/libuavcan/include/dsdlc_generated)
+include_directories(${UAVCAN_LIBUAVCAN_PATH}/libuavcan_drivers/posix/include)
+include_directories(${UAVCAN_LIBUAVCAN_PATH}/libuavcan_drivers/stm32/driver/include)
 
 px4_add_module(
-	MODULE platforms__common
+	MODULE modules__uavcan
+	MAIN uavcan
+	STACK 3200
+	COMPILE_FLAGS
+		-Wframe-larger-than=1500
+		-Wno-deprecated-declarations
+		-Os
 	SRCS
-		px4_getopt.c
+		# Main
+		uavcan_main.cpp
+		uavcan_params.c
+		uavcan_clock.cpp
+
+		# Actuators
+		actuators/esc.cpp
+
+		# Sensors
+		sensors/sensor_bridge.cpp
+		sensors/gnss.cpp
+		sensors/mag.cpp
+		sensors/baro.cpp
+
 	DEPENDS
-		${depends}
+		platforms__common
+		uavcan
 	)
-# vim: set noet ft=cmake fenc=utf-8 ff=unix : 
+
+## vim: set noet ft=cmake fenc=utf-8 ff=unix : 
