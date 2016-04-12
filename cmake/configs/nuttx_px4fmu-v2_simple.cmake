@@ -39,6 +39,7 @@ set(config_module_list
 	drivers/mkblctrl
 	drivers/px4flow
 	drivers/oreoled
+	drivers/oreoled/oreoled_bootloader
 	drivers/gimbal
 	drivers/pwm_input
 	drivers/camera_trigger

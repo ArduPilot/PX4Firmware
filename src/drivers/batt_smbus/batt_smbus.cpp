@@ -618,13 +618,13 @@ batt_smbus_main(int argc, char *argv[])
 
 		default:
 			batt_smbus_usage();
-			exit(0);
+			return 0;
 		}
 	}
 
 	if (optind >= argc) {
 		batt_smbus_usage();
-		exit(1);
+		return 1;
 	}
 
 	const char *verb = argv[optind];
@@ -648,32 +648,32 @@ batt_smbus_main(int argc, char *argv[])
 			}
 		}
 
-		exit(0);
+		return 0;
 	}
 
 	/* need the driver past this point */
 	if (g_batt_smbus == nullptr) {
 		warnx("not started");
 		batt_smbus_usage();
-		exit(1);
+		return 1;
 	}
 
 	if (!strcmp(verb, "test")) {
 		g_batt_smbus->test();
-		exit(0);
+		return 0;
 	}
 
 	if (!strcmp(verb, "stop")) {
 		delete g_batt_smbus;
 		g_batt_smbus = nullptr;
-		exit(0);
+		return 0;
 	}
 
 	if (!strcmp(verb, "search")) {
 		g_batt_smbus->search();
-		exit(0);
+		return 0;
 	}
 
 	batt_smbus_usage();
-	exit(0);
+	return 0;
 }

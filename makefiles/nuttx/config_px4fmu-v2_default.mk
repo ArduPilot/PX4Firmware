@@ -44,6 +44,7 @@ MODULES		+= modules/sensors
 MODULES		+= drivers/mkblctrl
 MODULES		+= drivers/px4flow
 MODULES		+= drivers/oreoled
+MODULES		+= drivers/oreoled/oreoled_bootloader
 MODULES		+= drivers/gimbal
 MODULES		+= drivers/pwm_input
 
