@@ -1,7 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (c) 2013 PX4 Development Team. All rights reserved.
- *   Author: Anton Babushkin <anton.babushkin@me.com>
+ *   Copyright (c) 2015 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,78 +32,78 @@
  ****************************************************************************/
 
 /**
- * @file version.h
+ * @file px4fmu_params.c
  *
- * Tools for system version detection.
+ * Parameters defined by the PX4FMU driver
  *
- * @author Anton Babushkin <anton.babushkin@me.com>
+ * @author Lorenz Meier <lorenz@px4.io>
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include <nuttx/config.h>
+#include <systemlib/param/param.h>
 
-#ifdef CONFIG_ARCH_BOARD_PX4FMU_V1
-#define	HW_ARCH "PX4FMU_V1"
-#endif
+/**
+ * Invert direction of aux output channel 1
+ *
+ * Set to 1 to invert the channel, 0 for default direction.
+ *
+ * @min 0
+ * @max 1
+ * @group PWM Outputs
+ */
+PARAM_DEFINE_INT32(PWM_AUX_REV1, 0);
 
-#ifdef CONFIG_ARCH_BOARD_PX4FMU_V2
-#define	HW_ARCH "PX4FMU_V2"
-#endif
+/**
+ * Invert direction of aux output channel 2
+ *
+ * Set to 1 to invert the channel, 0 for default direction.
+ *
+ * @min 0
+ * @max 1
+ * @group PWM Outputs
+ */
+PARAM_DEFINE_INT32(PWM_AUX_REV2, 0);
 
-#ifdef CONFIG_ARCH_BOARD_PX4FMU_V4
-#define	HW_ARCH "PX4FMU_V4"
-#endif
+/**
+ * Invert direction of aux output channel 3
+ *
+ * Set to 1 to invert the channel, 0 for default direction.
+ *
+ * @min 0
+ * @max 1
+ * @group PWM Outputs
+ */
+PARAM_DEFINE_INT32(PWM_AUX_REV3, 0);
 
-#ifdef CONFIG_ARCH_BOARD_AEROCORE
-#define	HW_ARCH "AEROCORE"
-#endif
+/**
+ * Invert direction of aux output channel 4
+ *
+ * Set to 1 to invert the channel, 0 for default direction.
+ *
+ * @min 0
+ * @max 1
+ * @group PWM Outputs
+ */
+PARAM_DEFINE_INT32(PWM_AUX_REV4, 0);
 
-#ifdef CONFIG_ARCH_BOARD_MINDPX_V2
-#define HW_ARCH "MINDPX_V2"
-#endif
+/**
+ * Invert direction of aux output channel 5
+ *
+ * Set to 1 to invert the channel, 0 for default direction.
+ *
+ * @min 0
+ * @max 1
+ * @group PWM Outputs
+ */
+PARAM_DEFINE_INT32(PWM_AUX_REV5, 0);
 
-#ifdef CONFIG_ARCH_BOARD_PX4_STM32F4DISCOVERY
-#define HW_ARCH "PX4_STM32F4DISCOVERY"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_SITL
-#define	HW_ARCH "LINUXTEST"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_EAGLE
-#define	HW_ARCH "LINUXTEST"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_RPI2
-#define	HW_ARCH "LINUXTEST"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_F4BY
-#define	HW_ARCH "F4BY"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_VRBRAIN_V51
-#define HW_ARCH "VRBRAIN_V51"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_VRBRAIN_V52
-#define HW_ARCH "VRBRAIN_V52"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_VRBRAIN_V54
-#define HW_ARCH "VRBRAIN_V54"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_VRUBRAIN_V51
-#define HW_ARCH "VRUBRAIN_V51"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_VRUBRAIN_V52
-#define HW_ARCH "VRUBRAIN_V52"
-#endif
-
-#ifdef CONFIG_ARCH_BOARD_VRCORE_V10
-#define HW_ARCH "VRCORE_V10"
-#endif
-
-#endif /* VERSION_H_ */
+/**
+ * Invert direction of aux output channel 6
+ *
+ * Set to 1 to invert the channel, 0 for default direction.
+ *
+ * @min 0
+ * @max 1
+ * @group PWM Outputs
+ */
+PARAM_DEFINE_INT32(PWM_AUX_REV6, 0);

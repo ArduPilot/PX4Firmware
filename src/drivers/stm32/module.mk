@@ -42,6 +42,9 @@ SRCS		= drv_hrt.c \
 		  drv_io_timer.c \
 		  drv_input_capture.c
 
+ifeq ($(BOARD),f4by)
+SRCS		+=  drv_rc.c
+endif
 
 INCLUDE_DIRS	+= $(NUTTX_SRC)/arch/arm/src/stm32 $(NUTTX_SRC)/arch/arm/src/common
 

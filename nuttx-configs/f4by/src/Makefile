@@ -1,6 +1,8 @@
 ############################################################################
+# configs/px4fmu-v1/src/Makefile
 #
-#   Copyright (c) 2012-2015 PX4 Development Team. All rights reserved.
+#   Copyright (C) 2013 Gregory Nutt. All rights reserved.
+#   Author: Gregory Nutt <gnutt@nuttx.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -12,7 +14,7 @@
 #    notice, this list of conditions and the following disclaimer in
 #    the documentation and/or other materials provided with the
 #    distribution.
-# 3. Neither the name PX4 nor the names of its contributors may be
+# 3. Neither the name NuttX nor the names of its contributors may be
 #    used to endorse or promote products derived from this software
 #    without specific prior written permission.
 #
@@ -31,48 +33,52 @@
 #
 ############################################################################
 
-#
-# System utility library
-#
+-include $(TOPDIR)/Make.defs
 
-SRCS		 = \
-		   perf_counter.c \
-		   conversions.c \
-		   cpuload.c \
-		   getopt_long.c \
-		   pid/pid.c \
-		   airspeed.c \
-		   mavlink_log.c \
-		   rc_check.c \
-		   otp.c \
-		   board_serial.c \
-		   pwm_limit/pwm_limit.c \
-		   mcu_version.c \
-		   bson/tinybson.c \
-		   circuit_breaker.cpp \
-		   printload.c \
-		   $(BUILD_DIR)git_version.c
+CFLAGS		+= -I$(TOPDIR)/sched
 
-ifneq ($(ARDUPILOT_BUILD),1)
-# ArduPilot uses its own parameter system
-SRCS		+= param/param.c \
-		   system_params.c \
-		   circuit_breaker_params.c
+ASRCS		= 
+AOBJS		= $(ASRCS:.S=$(OBJEXT))
+
+CSRCS		= empty.c
+COBJS		= $(CSRCS:.c=$(OBJEXT))
+
+SRCS		= $(ASRCS) $(CSRCS)
+OBJS		= $(AOBJS) $(COBJS)
+
+ARCH_SRCDIR	= $(TOPDIR)/arch/$(CONFIG_ARCH)/src
+ifeq ($(WINTOOL),y)
+  CFLAGS	+= -I "${shell cygpath -w $(ARCH_SRCDIR)/chip}" \
+  		   -I "${shell cygpath -w $(ARCH_SRCDIR)/common}" \
+  		   -I "${shell cygpath -w $(ARCH_SRCDIR)/armv7-m}"
+else
+  CFLAGS	+= -I$(ARCH_SRCDIR)/chip -I$(ARCH_SRCDIR)/common -I$(ARCH_SRCDIR)/armv7-m
 endif
 
-ifeq ($(PX4_TARGET_OS),nuttx)
-SRCS		+= err.c \
-		   up_cxxinitialize.c 
-endif
+all: libboard$(LIBEXT)
 
-ifneq ($(PX4_TARGET_OS),qurt)
-SRCS 		+= hx_stream.c 
-endif
+$(AOBJS): %$(OBJEXT): %.S
+	$(call ASSEMBLE, $<, $@)
 
-ifeq ($(BOARD),f4by)
-SRCS		+=  ppm_decode.c
-endif
+$(COBJS) $(LINKOBJS): %$(OBJEXT): %.c
+	$(call COMPILE, $<, $@)
 
-MAXOPTIMIZATION	 = -Os
+libboard$(LIBEXT): $(OBJS)
+	$(call ARCHIVE, $@, $(OBJS))
 
-EXTRACFLAGS	= -Wno-sign-compare
+.depend: Makefile $(SRCS)
+	$(Q) $(MKDEP) $(CC) -- $(CFLAGS) -- $(SRCS) >Make.dep
+	$(Q) touch $@
+
+depend: .depend
+
+clean:
+	$(call DELFILE, libboard$(LIBEXT))
+	$(call CLEAN)
+
+distclean: clean
+	$(call DELFILE, Make.dep)
+	$(call DELFILE, .depend)
+
+-include Make.dep
+

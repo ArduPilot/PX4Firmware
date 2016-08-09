@@ -1,6 +1,6 @@
 ############################################################################
 #
-#   Copyright (c) 2012-2015 PX4 Development Team. All rights reserved.
+#   Copyright (c) 2015 PX4 Development Team. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,49 +30,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 ############################################################################
-
-#
-# System utility library
-#
-
-SRCS		 = \
-		   perf_counter.c \
-		   conversions.c \
-		   cpuload.c \
-		   getopt_long.c \
-		   pid/pid.c \
-		   airspeed.c \
-		   mavlink_log.c \
-		   rc_check.c \
-		   otp.c \
-		   board_serial.c \
-		   pwm_limit/pwm_limit.c \
-		   mcu_version.c \
-		   bson/tinybson.c \
-		   circuit_breaker.cpp \
-		   printload.c \
-		   $(BUILD_DIR)git_version.c
-
-ifneq ($(ARDUPILOT_BUILD),1)
-# ArduPilot uses its own parameter system
-SRCS		+= param/param.c \
-		   system_params.c \
-		   circuit_breaker_params.c
-endif
-
-ifeq ($(PX4_TARGET_OS),nuttx)
-SRCS		+= err.c \
-		   up_cxxinitialize.c 
-endif
-
-ifneq ($(PX4_TARGET_OS),qurt)
-SRCS 		+= hx_stream.c 
-endif
-
-ifeq ($(BOARD),f4by)
-SRCS		+=  ppm_decode.c
-endif
-
-MAXOPTIMIZATION	 = -Os
-
-EXTRACFLAGS	= -Wno-sign-compare
+px4_add_module(
+	MODULE drivers__boards__px4fmu-v1
+	COMPILE_FLAGS
+		-Os
+	SRCS
+		px4fmu_can.c
+		px4fmu_init.c
+		px4fmu_pwm_servo.c
+		px4fmu_spi.c
+		px4fmu_usb.c
+		px4fmu_led.c
+	DEPENDS
+		platforms__common
+	)
+# vim: set noet ft=cmake fenc=utf-8 ff=unix : 
