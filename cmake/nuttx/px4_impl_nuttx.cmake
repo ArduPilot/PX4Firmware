@@ -519,6 +519,54 @@ function(px4_os_add_flags)
 			-mthumb
 			-march=armv7-m
 			)
+	elseif (${BOARD} STREQUAL "vrbrain-v51")
+		set(cpu_flags
+			-mcpu=cortex-m4
+			-mthumb
+			-march=armv7e-m
+			-mfpu=fpv4-sp-d16
+			-mfloat-abi=hard
+			)
+	elseif (${BOARD} STREQUAL "vrbrain-v52")
+		set(cpu_flags
+			-mcpu=cortex-m4
+			-mthumb
+			-march=armv7e-m
+			-mfpu=fpv4-sp-d16
+			-mfloat-abi=hard
+			)
+	elseif (${BOARD} STREQUAL "vrbrain-v54")
+		set(cpu_flags
+			-mcpu=cortex-m4
+			-mthumb
+			-march=armv7e-m
+			-mfpu=fpv4-sp-d16
+			-mfloat-abi=hard
+			)
+	elseif (${BOARD} STREQUAL "vrubrain-v51")
+		set(cpu_flags
+			-mcpu=cortex-m4
+			-mthumb
+			-march=armv7e-m
+			-mfpu=fpv4-sp-d16
+			-mfloat-abi=hard
+			)
+	elseif (${BOARD} STREQUAL "vrubrain-v52")
+		set(cpu_flags
+			-mcpu=cortex-m4
+			-mthumb
+			-march=armv7e-m
+			-mfpu=fpv4-sp-d16
+			-mfloat-abi=hard
+			)
+	elseif (${BOARD} STREQUAL "vrcore-v10")
+		set(cpu_flags
+			-mcpu=cortex-m4
+			-mthumb
+			-march=armv7e-m
+			-mfpu=fpv4-sp-d16
+			-mfloat-abi=hard
+			)
 	endif()
 	list(APPEND c_flags ${cpu_flags})
 	list(APPEND cxx_flags ${cpu_flags})
