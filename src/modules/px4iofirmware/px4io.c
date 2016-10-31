@@ -133,6 +133,9 @@ heartbeat_blink(void)
 	LED_BLUE(heartbeat = !heartbeat);
 }
 
+// breathing on proficnc's "The Cube" causes magnetic interference.
+#define BREATHE 0
+
 static void
 ring_blink(void)
 {
@@ -144,6 +147,7 @@ ring_blink(void)
 		return;
 	}
 
+#if BREATH
 	// XXX this led code does have
 	// intentionally a few magic numbers.
 	const unsigned max_brightness = 118;
@@ -188,7 +192,9 @@ ring_blink(void)
 		on_counter = 0;
 		counter++;
 	}
-
+#else
+    LED_RING(0);
+#endif
 #endif
 }
 
