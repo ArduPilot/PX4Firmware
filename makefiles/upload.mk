@@ -39,6 +39,9 @@ upload-serial-aerocore:
 upload-serial-px4-stm32f4discovery:	$(BUNDLE) $(UPLOADER)
 	$(Q) $(PYTHON) -u $(UPLOADER) --port $(SERIAL_PORTS) $(BUNDLE)
 
+upload-serial-f4by:	$(BUNDLE) $(UPLOADER)
+	$(Q) $(PYTHON) -u $(UPLOADER) --port $(SERIAL_PORTS) $(BUNDLE)
+
 #
 # JTAG firmware uploading with OpenOCD
 #

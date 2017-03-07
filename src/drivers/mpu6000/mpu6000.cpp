@@ -1799,15 +1799,27 @@ MPU6000::measure()
 	 * Convert from big to little endian
 	 */
 
+#if defined(CONFIG_ARCH_BOARD_F4BY)
+	report.accel_x = -int16_t_from_bytes(mpu_report.accel_x);
+	report.accel_y = int16_t_from_bytes(mpu_report.accel_y);
+	report.accel_z = -int16_t_from_bytes(mpu_report.accel_z);
+#else
 	report.accel_x = int16_t_from_bytes(mpu_report.accel_x);
 	report.accel_y = int16_t_from_bytes(mpu_report.accel_y);
 	report.accel_z = int16_t_from_bytes(mpu_report.accel_z);
+#endif
 
 	report.temp = int16_t_from_bytes(mpu_report.temp);
 
+#if defined(CONFIG_ARCH_BOARD_F4BY)
+	report.gyro_x = -int16_t_from_bytes(mpu_report.gyro_x);
+	report.gyro_y = int16_t_from_bytes(mpu_report.gyro_y);
+	report.gyro_z = -int16_t_from_bytes(mpu_report.gyro_z);
+#else
 	report.gyro_x = int16_t_from_bytes(mpu_report.gyro_x);
 	report.gyro_y = int16_t_from_bytes(mpu_report.gyro_y);
 	report.gyro_z = int16_t_from_bytes(mpu_report.gyro_z);
+#endif	
 
 	if (report.accel_x == 0 &&
 	    report.accel_y == 0 &&

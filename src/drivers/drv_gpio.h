@@ -141,6 +141,16 @@
 /* no GPIO driver on the SITL configuration */
 #endif
 
+#ifdef CONFIG_ARCH_BOARD_F4BY
+
+# define GPIO_EXT_1		(1<<0)		/**< high-power GPIO 1 */
+# define GPIO_EXT_2		(1<<1)		/**< high-power GPIO 1 */
+# define GPIO_EXT_3		(1<<2)		/**< high-power GPIO 1 */
+
+# define F4BY_DEVICE_PATH	"/dev/f4by_fmu"
+# define F4BY_INPUT_DEVICE_PATH "/dev/f4by_input"
+#endif
+
 #if defined(CONFIG_ARCH_BOARD_VRBRAIN_V51) || defined(CONFIG_ARCH_BOARD_VRBRAIN_V52) || defined(CONFIG_ARCH_BOARD_VRBRAIN_V54) || defined(CONFIG_ARCH_BOARD_VRCORE_V10) || defined(CONFIG_ARCH_BOARD_VRUBRAIN_V51) || defined(CONFIG_ARCH_BOARD_VRUBRAIN_V52)
 /*
  * VRBRAINv52 GPIO numbers.
@@ -161,11 +171,12 @@
 #if !defined(CONFIG_ARCH_BOARD_PX4IO_V1) && !defined(CONFIG_ARCH_BOARD_PX4IO_V2)  && \
 	!defined(CONFIG_ARCH_BOARD_PX4FMU_V1) && !defined(CONFIG_ARCH_BOARD_PX4FMU_V2) && \
 	!defined(CONFIG_ARCH_BOARD_AEROCORE) && !defined(CONFIG_ARCH_BOARD_PX4_STM32F4DISCOVERY) && \
-	!defined(CONFIG_ARCH_BOARD_MINDPX_V2) && \
+	!defined(CONFIG_ARCH_BOARD_MINDPX_V2) &&\
 	!defined(CONFIG_ARCH_BOARD_PX4FMU_V4) && !defined(CONFIG_ARCH_BOARD_SITL) && \
 	!defined(CONFIG_ARCH_BOARD_VRBRAIN_V51) && !defined(CONFIG_ARCH_BOARD_VRBRAIN_V52) && !defined(CONFIG_ARCH_BOARD_VRBRAIN_V54) && \
 	!defined(CONFIG_ARCH_BOARD_VRCORE_V10) && \
-	!defined(CONFIG_ARCH_BOARD_VRUBRAIN_V51) && !defined(CONFIG_ARCH_BOARD_VRUBRAIN_V52)
+	!defined(CONFIG_ARCH_BOARD_VRUBRAIN_V51) && !defined(CONFIG_ARCH_BOARD_VRUBRAIN_V52) \
+    !defined(CONFIG_ARCH_BOARD_F4BY)
 # error No CONFIG_ARCH_BOARD_xxxx set
 #endif
 /*
