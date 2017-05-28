@@ -337,37 +337,9 @@ then
 	#
 	set TTYS1_BUSY no
 
-	#
-	# Check if UAVCAN is enabled, default to it for ESCs
-	#
-	if param greater UAVCAN_ENABLE 2
-	then
-		set OUTPUT_MODE uavcan_esc
-	fi
-
 	# If OUTPUT_MODE == none then something is wrong with setup and we shouldn't try to enable output
 	if [ $OUTPUT_MODE != none ]
 	then
-		if [ $OUTPUT_MODE == uavcan_esc ]
-		then
-			if param compare UAVCAN_ENABLE 0
-			then
-				echo "[i] OVERRIDING UAVCAN_ENABLE = 1"
-				param set UAVCAN_ENABLE 1
-			fi
-		fi
-
-		if [ $OUTPUT_MODE == io -o $OUTPUT_MODE == uavcan_esc ]
-		then
-			if px4io start
-			then
-				sh /etc/init.d/rc.io
-			else
-				echo "ERROR: PX4IO start failed" >> $LOG_FILE
-				tone_alarm $TUNE_ERR
-			fi
-		fi
-
 		if [ $OUTPUT_MODE == fmu -o $OUTPUT_MODE == ardrone ]
 		then
 			if fmu mode_$FMU_MODE
@@ -545,27 +517,6 @@ then
 	then
 		if param set CBRK_IO_SAFETY 22027
 		then
-		fi
-	fi
-
-	#
-	# Starting stuff according to UAVCAN_ENABLE value
-	#
-	if param greater UAVCAN_ENABLE 0
-	then
-		if uavcan start
-		then
-		else
-			tone_alarm $TUNE_ERR
-		fi
-	fi
-
-	if param greater UAVCAN_ENABLE 1
-	then
-		if uavcan start fw
-		then
-		else
-			tone_alarm $TUNE_ERR
 		fi
 	fi
 

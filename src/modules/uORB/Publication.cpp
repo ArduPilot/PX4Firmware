@@ -46,7 +46,6 @@
 #include "topics/vehicle_attitude_setpoint.h"
 #include "topics/vehicle_rates_setpoint.h"
 #include "topics/actuator_outputs.h"
-#include "topics/actuator_direct.h"
 #include "topics/encoders.h"
 #include "topics/tecs_status.h"
 #include "topics/rc_channels.h"
@@ -116,7 +115,6 @@ template class __EXPORT Publication<vehicle_global_velocity_setpoint_s>;
 template class __EXPORT Publication<vehicle_attitude_setpoint_s>;
 template class __EXPORT Publication<vehicle_rates_setpoint_s>;
 template class __EXPORT Publication<actuator_outputs_s>;
-template class __EXPORT Publication<actuator_direct_s>;
 template class __EXPORT Publication<encoders_s>;
 template class __EXPORT Publication<tecs_status_s>;
 template class __EXPORT Publication<rc_channels_s>;

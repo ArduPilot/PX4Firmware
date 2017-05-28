@@ -138,6 +138,3 @@ endif
 
 $(NUTTX_SRC): checksubmodules
 
-$(UAVCAN_DIR):
-	$(Q) (./Tools/check_submodules.sh)
-

@@ -39,8 +39,6 @@
 #include "Subscription.hpp"
 #include "topics/parameter_update.h"
 #include "topics/actuator_controls.h"
-#include "topics/vehicle_gps_position.h"
-#include "topics/satellite_info.h"
 #include "topics/sensor_combined.h"
 #include "topics/hil_sensor.h"
 #include "topics/vehicle_attitude.h"
@@ -141,8 +139,6 @@ const T &Subscription<T>::get() { return _data; }
 
 template class __EXPORT Subscription<parameter_update_s>;
 template class __EXPORT Subscription<actuator_controls_s>;
-template class __EXPORT Subscription<vehicle_gps_position_s>;
-template class __EXPORT Subscription<satellite_info_s>;
 template class __EXPORT Subscription<sensor_combined_s>;
 template class __EXPORT Subscription<hil_sensor_s>;
 template class __EXPORT Subscription<vehicle_attitude_s>;

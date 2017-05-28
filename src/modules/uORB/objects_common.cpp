@@ -45,17 +45,11 @@
 
 #include <drivers/drv_orb_dev.h>
 
-#include "topics/sensor_mag.h"
-ORB_DEFINE(sensor_mag, struct sensor_mag_s);
-
 #include "topics/sensor_accel.h"
 ORB_DEFINE(sensor_accel, struct sensor_accel_s);
 
 #include "topics/sensor_gyro.h"
 ORB_DEFINE(sensor_gyro, struct sensor_gyro_s);
-
-#include "topics/sensor_baro.h"
-ORB_DEFINE(sensor_baro, struct sensor_baro_s);
 
 #include "topics/output_pwm.h"
 ORB_DEFINE(output_pwm, struct output_pwm_s);
@@ -78,14 +72,8 @@ ORB_DEFINE(sensor_combined, struct sensor_combined_s);
 #include "topics/hil_sensor.h"
 ORB_DEFINE(hil_sensor, struct hil_sensor_s);
 
-#include "topics/vehicle_gps_position.h"
-ORB_DEFINE(vehicle_gps_position, struct vehicle_gps_position_s);
-
 #include "topics/vehicle_land_detected.h"
 ORB_DEFINE(vehicle_land_detected, struct vehicle_land_detected_s);
-
-#include "topics/satellite_info.h"
-ORB_DEFINE(satellite_info, struct satellite_info_s);
 
 #include "topics/home_position.h"
 ORB_DEFINE(home_position, struct home_position_s);
@@ -213,9 +201,6 @@ ORB_DEFINE(actuator_armed, struct actuator_armed_s);
 
 #include "topics/actuator_outputs.h"
 ORB_DEFINE(actuator_outputs, struct actuator_outputs_s);
-
-#include "topics/actuator_direct.h"
-ORB_DEFINE(actuator_direct, struct actuator_direct_s);
 
 #include "topics/multirotor_motor_limits.h"
 ORB_DEFINE(multirotor_motor_limits, struct multirotor_motor_limits_s);

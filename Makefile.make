@@ -221,9 +221,6 @@ endif
 
 $(NUTTX_SRC): checksubmodules
 
-$(UAVCAN_DIR):
-	$(Q) (./Tools/check_submodules.sh)
-
 endif
 
 ifeq ($(PX4_TARGET_OS),nuttx)
