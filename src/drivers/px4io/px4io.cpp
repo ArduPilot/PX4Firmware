@@ -1854,6 +1854,9 @@ PX4IO::io_publish_raw_rc()
 	} else if (_status & PX4IO_P_STATUS_FLAGS_RC_ST24) {
 		rc_val.input_source = input_rc_s::RC_INPUT_SOURCE_PX4IO_ST24;
 
+	} else if (_status & PX4IO_P_STATUS_FLAGS_RC_SUMD) {
+		rc_val.input_source = input_rc_s::RC_INPUT_SOURCE_PX4IO_SUMD;
+
 	} else if (_status & PX4IO_P_STATUS_FLAGS_RC_SRXL) {
 		rc_val.input_source = input_rc_s::RC_INPUT_SOURCE_PX4IO_SRXL;
 
@@ -2840,6 +2843,9 @@ PX4IO::ioctl(file *filep, int cmd, unsigned long arg)
 
 			} else if (status & PX4IO_P_STATUS_FLAGS_RC_ST24) {
 				rc_val->input_source = input_rc_s::RC_INPUT_SOURCE_PX4IO_ST24;
+
+			} else if (status & PX4IO_P_STATUS_FLAGS_RC_SUMD) {
+				rc_val->input_source = input_rc_s::RC_INPUT_SOURCE_PX4IO_SUMD;
 
 			} else if (status & PX4IO_P_STATUS_FLAGS_RC_SRXL) {
 				rc_val->input_source = input_rc_s::RC_INPUT_SOURCE_PX4IO_SRXL;

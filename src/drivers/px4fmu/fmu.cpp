@@ -1276,6 +1276,7 @@ PX4FMU::cycle()
 	uint16_t raw_rc_count;
 	unsigned frame_drops;
 	bool dsm_11_bit;
+	bool failsafe_state;
 
 
 	if (_report_lock && _rc_scan_locked) {
@@ -1377,14 +1378,14 @@ PX4FMU::cycle()
 					/* set updated flag if one complete packet was parsed */
 					sumd_rssi = RC_INPUT_RSSI_MAX;
 					rc_updated = (OK == sumd_decode(_rcs_buf[i], &sumd_rssi, &rx_count,
-									&raw_rc_count, raw_rc_values, input_rc_s::RC_INPUT_MAX_CHANNELS));
+									&raw_rc_count, raw_rc_values, input_rc_s::RC_INPUT_MAX_CHANNELS, &failsafe_state));
 				}
 
 				if (rc_updated) {
 					// we have a new SUMD frame. Publish it.
 					_rc_in.input_source = input_rc_s::RC_INPUT_SOURCE_PX4FMU_SUMD;
 					fill_rc_in(raw_rc_count, raw_rc_values, _cycle_timestamp,
-						   false, false, frame_drops, sumd_rssi);
+						   false, failsafe_state, frame_drops, sumd_rssi);
 					_rc_scan_locked = true;
 				}
 			}
@@ -1411,7 +1412,6 @@ PX4FMU::cycle()
 				// parse new data
 				rc_updated = false;
                                 uint8_t srxl_chan_count;
-				bool failsafe_state;
                                 
 				for (unsigned i = 0; i < (unsigned)newBytes; i++) {
 					/* set updated flag if one complete packet was parsed */
