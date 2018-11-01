@@ -572,6 +572,9 @@ dsm_input(int fd, uint16_t *values, uint16_t *num_values, bool *dsm_11_bit, uint
 	} else {
 		*n_bytes = ret;
 		*bytes = &dsm_buf[0];
+
+		/* return immediately if dsm parsing is deactivated*/
+		if (max_values == 0 ) return false;
 	}
 
 	/*

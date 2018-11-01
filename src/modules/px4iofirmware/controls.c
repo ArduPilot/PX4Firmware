@@ -86,9 +86,9 @@ bool dsm_port_input(uint16_t *rssi, bool *dsm_updated, bool *st24_updated, bool 
 	bool dsm_11_bit;
 	uint16_t dsm_chan_count;
 
-	// we don't accept DSM if we are currently decoding SRXL, as
-	// SRXL can be incorrectly interpreted as DSM
-	bool allow_dsm = !(r_status_flags & PX4IO_P_STATUS_FLAGS_RC_SRXL);
+	// we don't accept DSM if we are currently decoding ST24, SUMD, SRXL, as
+	// they can be incorrectly interpreted as DSM
+	bool allow_dsm = !(r_status_flags & (PX4IO_P_STATUS_FLAGS_RC_ST24 | PX4IO_P_STATUS_FLAGS_RC_SUMD | PX4IO_P_STATUS_FLAGS_RC_SRXL));
 
 	*dsm_updated = dsm_input(_dsm_fd, r_raw_rc_values, &dsm_chan_count, &dsm_11_bit, &n_bytes, &bytes,
 				 allow_dsm ? PX4IO_RC_INPUT_CHANNELS : 0);
@@ -140,6 +140,7 @@ bool dsm_port_input(uint16_t *rssi, bool *dsm_updated, bool *st24_updated, bool 
 	/* get data from FD and attempt to parse with SUMD libs */
 	uint8_t sumd_rssi, sumd_rx_count;
 	uint16_t sumd_channel_count = 0;
+        bool sumd_failsafe_state;
 
 	*sumd_updated = false;
 
@@ -147,7 +148,7 @@ bool dsm_port_input(uint16_t *rssi, bool *dsm_updated, bool *st24_updated, bool 
 		/* set updated flag if one complete packet was parsed */
 		sumd_rssi = RC_INPUT_RSSI_MAX;
 		*sumd_updated |= (OK == sumd_decode(bytes[i], &sumd_rssi, &sumd_rx_count,
-						    &sumd_channel_count, r_raw_rc_values, PX4IO_RC_INPUT_CHANNELS));
+						    &sumd_channel_count, r_raw_rc_values, PX4IO_RC_INPUT_CHANNELS, &sumd_failsafe_state));
 	}
 
 	if (*sumd_updated) {
@@ -157,13 +158,19 @@ bool dsm_port_input(uint16_t *rssi, bool *dsm_updated, bool *st24_updated, bool 
 
 		r_status_flags |= PX4IO_P_STATUS_FLAGS_RC_SUMD;
 		r_raw_rc_flags &= ~(PX4IO_P_RAW_RC_FLAGS_FRAME_DROP);
-		r_raw_rc_flags &= ~(PX4IO_P_RAW_RC_FLAGS_FAILSAFE);
+
+		if (sumd_failsafe_state) {
+			r_raw_rc_flags |= PX4IO_P_RAW_RC_FLAGS_FAILSAFE;
+
+		} else {
+			r_raw_rc_flags &= ~(PX4IO_P_RAW_RC_FLAGS_FAILSAFE);
+		}
 	}
 
 	/* attempt to parse with SRXL lib */
 	uint8_t srxl_channel_count = 0;
+	bool failsafe_state;
 	hrt_abstime now = hrt_absolute_time();
-        bool failsafe_state;
 
 	*srxl_updated = false;
 
@@ -297,8 +304,13 @@ controls_tick()
 	perf_begin(c_gather_sbus);
 
 	bool sbus_failsafe, sbus_frame_drop;
-	bool sbus_updated = sbus_input(_sbus_fd, r_raw_rc_values, &r_raw_rc_count, &sbus_failsafe, &sbus_frame_drop,
+	bool sbus_updated = false;
+
+	/* in case of dsm/st24/sumd/srxl input, sbus input (which is not protected with integrity checksum) is deactivated to avoid corruption */
+	if (!(r_status_flags & (PX4IO_P_STATUS_FLAGS_RC_DSM | PX4IO_P_STATUS_FLAGS_RC_ST24 | PX4IO_P_STATUS_FLAGS_RC_SUMD | PX4IO_P_STATUS_FLAGS_RC_SRXL))) {
+		sbus_updated = sbus_input(_sbus_fd, r_raw_rc_values, &r_raw_rc_count, &sbus_failsafe, &sbus_frame_drop,
 				       PX4IO_RC_INPUT_CHANNELS);
+	}
 
 	if (sbus_updated) {
 		r_status_flags |= PX4IO_P_STATUS_FLAGS_RC_SBUS;
@@ -338,7 +350,12 @@ controls_tick()
 	 * disable the PPM decoder completely if we have S.bus signal.
 	 */
 	perf_begin(c_gather_ppm);
-	bool ppm_updated = ppm_input(r_raw_rc_values, &r_raw_rc_count, &r_page_raw_rc_input[PX4IO_P_RAW_RC_DATA]);
+	bool ppm_updated = false;
+
+	/* in case of dsm/st24/sumd/srxl/sbus input, ppm input (which is not protected with integrity checksum) is deactivated to avoid corruption */
+	if (!(r_status_flags & (PX4IO_P_STATUS_FLAGS_RC_DSM | PX4IO_P_STATUS_FLAGS_RC_ST24 | PX4IO_P_STATUS_FLAGS_RC_SUMD | PX4IO_P_STATUS_FLAGS_RC_SRXL | PX4IO_P_STATUS_FLAGS_RC_SBUS ))) {
+		ppm_updated = ppm_input(r_raw_rc_values, &r_raw_rc_count, &r_page_raw_rc_input[PX4IO_P_RAW_RC_DATA]);
+	}
 
 	if (ppm_updated) {
 
